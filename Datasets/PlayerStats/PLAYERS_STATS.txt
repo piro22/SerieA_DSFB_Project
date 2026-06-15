@@ -1,0 +1,34 @@
+1. In questo json ci sono tutte le squadre della serie a con il loro codice univoco, a me serve quello.
+ 
+https://www.fotmob.com/_next/data/0Sm3sug45d5kO4fly3s6V/it/leagues/55/overview/serie.json?lng=it&id=55&tab=overview&slug=serie&season=2025-2026
+
+
+2. una volta preso il codice univoco e il nome delle squadre a cui è associato possiamo incollarli in questo link:
+
+https://www.fotmob.com/_next/data/0Sm3sug45d5kO4fly3s6V/it/teams/CODICE/overview/SQUADRA.json?lng=it&id=CODICE&tab=overview&slug=SQUADRA
+
+Questo link scarica un json in cui si trovano tutti i giocatori della squadra con anche le statistiche individuali
+
+NOTA: ci sono rating e seasonRating, potrebbero essere utili ma non ci sono le stats dettagliate del giocatore
+NOTA: non ha stagionalità, o non ho trovato un json per ciascuna stagione
+
+In questo json ci sono anche id univoco del giocatore e nome
+
+
+3. una volta preso id e nome del calciatore a cui è associato, possiamo comporre un terzo link:
+
+https://www.fotmob.com/_next/data/0Sm3sug45d5kO4fly3s6V/it/players/CODICE/NOME-PARSATO.json?lng=it&id=CODICE&slug=NOME-PARSATO
+
+https://www.fotmob.com/_next/data/rUWhshM_9ZHzNFd42zY9J/it/players/814398/nicolo-casale.json?lng=it&id=814398&slug=nicolo-casale
+
+
+4. Decidere se: 
+	a. fare una valutazione di ciascun giocatore e mettere nel main dataset la media per squadra home_mean_value away_mean_value
+	b. qualcosa di piu complesso ma che non penso sarà fattibile, sarà già complesso prendere la rosa e fare la media per partita
+
+
+
+
+
+
+
