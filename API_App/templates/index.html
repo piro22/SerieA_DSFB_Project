@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previsione Serie A</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; padding-top: 20px; }
+        .stats-box { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .players-list { max-height: 300px; overflow-y: auto; background: white; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; }
+        .media-voti { font-size: 1.5rem; font-weight: bold; color: #0d6efd; margin-top: 10px; }
+        .slider-box { background: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6; margin-top: 15px; }
+        .possession-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        /* Ritocco per la media voti dell'Away Team che inizialmente era blu */
+        #mediaTrasferta { color: #dc3545; }
+
+        /* Stili per l'overlay di Help personalizzato */
+        .help-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.55); 
+            z-index: 2000; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        .help-content { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 12px; 
+            max-width: 650px; 
+            width: 92%; 
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3); 
+        }
+    </style>
+</head>
+<body>
+
+<div id="helpOverlay" class="help-overlay d-none" onclick="document.getElementById('helpOverlay').classList.add('d-none')">
+    <div class="help-content" onclick="event.stopPropagation()">
+        <h4 class="text-primary mb-3">ℹ️ Guide to Using the API via cURL</h4>
+        
+        <h6 class="fw-bold text-secondary mb-2">Order of the 17 parameters in the array:</h6>
+        <ol class="small text-muted" style="column-count: 2; padding-left: 20px;">
+            <li>Home Team Ball Possession (%)</li>
+            <li>xG Home</li>
+            <li>xG Away</li>
+            <li>Passes Accuracy Home (%)</li>
+            <li>Passes Accuracy Away (%)</li>
+            <li>Shots inside the box Home</li>
+            <li>Shots inside the box Away</li>
+            <li>Shots outside the box Home</li>
+            <li>Shots outside the box Away</li>
+            <li>xG Open Play Home</li>
+            <li>xG Open Play Away</li>
+            <li>xG Set Play Home</li>
+            <li>xG Set Play Away</li>
+            <li>xGOT Home</li>
+            <li>xGOT Away</li>
+            <li>Team Rating Home (0-10)</li>
+            <li>Team Rating Away (0-10)</li>
+        </ol>
+
+        <h6 class="fw-bold mt-3">Example of a cURL command from the Windows PowerShell:</h6>
+        <div class="bg-dark text-info p-3 rounded font-monospace small mb-3">
+            <pre class="m-0 text-white" style="white-space: pre-wrap; word-break: break-all;"><code>Invoke-WebRequest -Method Get -Uri 'http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]'</code></pre>
+        </div>
+
+        <h6 class="fw-bold mt-3">Example of a cURL command from a Linux terminal:</h6>
+        <div class="bg-dark text-info p-3 rounded font-monospace small mb-3">
+            <pre class="m-0 text-white" style="white-space: pre-wrap; word-break: break-all;"><code>curl -X GET "http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]"</code></pre>
+        </div>
+        
+        <small class="text-muted d-block mb-3"><strong>Note:</strong> Always remember to wrap the entire URL in double quotes <code>"..."</code> .in the terminal, otherwise the square brackets of the array will cause shell interpretation errors.</small>
+        
+        <div class="text-end">
+            <button class="btn btn-secondary btn-sm px-4" onclick="document.getElementById('helpOverlay').classList.add('d-none')">Exit</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row align-items-center mb-4">
+        <div class="col-10 col-md-11 text-center">
+            <h1 class="m-0 ps-md-5">2026/2027 Serie A Match Prediction</h1>
+        </div>
+        <div class="col-2 col-md-1 text-end">
+            <button class="btn btn-outline-secondary px-3" onclick="document.getElementById('helpOverlay').classList.remove('d-none')">Help</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="p-4 rounded-3 bg-primary-subtle border border-primary-subtle">
+                <h3 class="text-primary fw-bold">Home Team</h3>
+                <select id="selectCasa" class="form-select mb-3" onchange="aggiornaSquadra('Casa')">
+                    <option value="">-- Select a Team --</option>
+                </select>
+                
+                <div id="statsCasa" class="stats-box d-none">
+                    <h5>Home Team Stats</h5>
+                    <ul id="listaStatsCasa" class="list-unstyled small"></ul>
+                </div>
+
+                <h5>Select Home Players (Max 16)</h5>
+                <div id="playersCasa" class="players-list mb-2">
+                    <p class="text-muted small">Select the team to choose the players...</p>
+                </div>
+                <div class="media-voti" id="mediaCasa">Team Rating: 0.00</div>
+
+                <div class="slider-box">
+                    <h5 class="text-primary mb-3">Match Parameters (Home)</h5>
+                    <div class="mb-3">
+                        <label for="sliderPassesCasa" class="form-label">Passes Accuracy: <strong id="valPassesCasa">75</strong>%</label>
+                        <input type="range" class="form-range" id="sliderPassesCasa" min="0" max="100" value="75" 
+                               oninput="document.getElementById('valPassesCasa').innerText = this.value">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="p-4 rounded-3 bg-danger-subtle border border-danger-subtle">
+                <h3 class="text-danger fw-bold">Away Team</h3>
+                <select id="selectTrasferta" class="form-select mb-3" onchange="aggiornaSquadra('Trasferta')">
+                    <option value="">-- Select a Team --</option>
+                </select>
+
+                <div id="statsTrasferta" class="stats-box d-none">
+                    <h5>Away Team Stats</h5>
+                    <ul id="listaStatsTrasferta" class="list-unstyled small"></ul>
+                </div>
+
+                <h5>Select Away Players (Max 16)</h5>
+                <div id="playersTrasferta" class="players-list mb-2">
+                    <p class="text-muted small">Select the team to choose the players...</p>
+                </div>
+                <div class="media-voti" id="mediaTrasferta">Team Rating: 0.00</div>
+
+                <div class="slider-box">
+                    <h5 class="text-danger mb-3">Match Parameters (Trasferta)</h5>
+                    <div class="mb-3">
+                        <label for="sliderPassesTrasferta" class="form-label">Passes Accuracy: <strong id="valPassesTrasferta">75</strong>%</label>
+                        <input type="range" class="form-range" id="sliderPassesTrasferta" min="0" max="100" value="75" 
+                               oninput="document.getElementById('valPassesTrasferta').innerText = this.value">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-md-8 text-center">
+            <div class="possession-box">
+                <h5 class="fw-bold mb-3">Ball Possession</h5>
+                
+                <div class="d-flex align-items-center justify-content-center">
+                    <span class="fs-3 fw-bold text-primary me-3" id="valPossessionCasa">50%</span>
+                    
+                    <input type="range" class="form-range w-50" id="sliderPossession" min="0" max="100" value="50" oninput="aggiornaSliderPossesso(this.value)">
+                    
+                    <span class="fs-3 fw-bold text-danger ms-3" id="valPossessionTrasferta">50%</span>
+                </div>
+                
+                <div class="d-flex justify-content-between px-5 mt-1 text-muted small">
+                    <span id="lblNomeCasa">Home</span>
+                    <span id="lblNomeTrasferta">Away</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4 mb-5">
+        <button class="btn btn-success btn-lg px-5" onclick="calcolaPrevisione()">Classify Match Result</button>
+        
+        <div id="risultato" class="mt-4 alert alert-info d-none fs-4"></div>
+    </div>
+</div>
+
+
+
+
+<script>
+    let datiSquadre = {};
+    let datiGiocatori = [];
+
+    window.onload = async function() {
+        try {
+            const resSquadre = await fetch('/static/statistiche_squadre.json');
+            datiSquadre = await resSquadre.json();
+
+            const resGiocatori = await fetch('/static/statistiche_giocatori.json');
+            datiGiocatori = await resGiocatori.json();
+
+            popolaTendine();
+        } catch(e) {
+            console.log("Inserisci i file JSON statici nel rispettivo percorso del server per popolare le liste.");
+        }
+    };
+
+    function popolaTendine() {
+        const squadre = Object.keys(datiSquadre).filter(sq => sq !== 'Empoli' && sq !== 'Salernitana' && sq !== 'Cremonese' && sq !== 'Hellas Verona' && sq !== 'Pisa').sort();
+        const selectCasa = document.getElementById('selectCasa');
+        const selectTrasferta = document.getElementById('selectTrasferta');
+
+        squadre.forEach(sq => {
+            selectCasa.add(new Option(sq, sq));
+            selectTrasferta.add(new Option(sq, sq));
+        });
+    }
+
+    function ottieniPrioritaRuolo(ruolo) {
+        if (!ruolo) return 5;
+        const r = ruolo.toLowerCase();
+        if (r.includes('keeper')) return 1;
+        if (r.includes('defender')) return 2;
+        if (r.includes('midfielder')) return 3;
+        if (r.includes('striker') || r.includes('attacker') || r.includes('forward')) return 4;
+        return 5;
+    }
+
+    function ottieniColoreRuolo(ruolo) {
+        if (!ruolo) return 'bg-secondary';
+        const r = ruolo.toLowerCase();
+        if (r.includes('keeper')) return 'bg-warning text-dark';
+        if (r.includes('defender')) return 'bg-success';
+        if (r.includes('midfielder')) return 'bg-primary';
+        if (r.includes('striker') || r.includes('attacker') || r.includes('forward')) return 'bg-danger';
+        return 'bg-secondary';
+    }
+    
+    function aggiornaSliderPossesso(valoreCasa) {
+        const valoreCasaInt = parseInt(valoreCasa);
+        const valoreTrasfertaInt = 100 - valoreCasaInt;
+        document.getElementById('valPossessionCasa').innerText = valoreCasaInt + '%';
+        document.getElementById('valPossessionTrasferta').innerText = valoreTrasfertaInt + '%';
+    }
+
+    function aggiornaSquadra(tipo) {
+        const nomeSquadra = document.getElementById(`select${tipo}`).value;
+        if (!nomeSquadra) return;
+
+        document.getElementById(`lblNome${tipo}`).innerText = nomeSquadra;
+
+        const stats = datiSquadre[nomeSquadra];
+        const statsBox = document.getElementById(`stats${tipo}`);
+        const listaStats = document.getElementById(`listaStats${tipo}`);
+        
+        if(stats) {
+            listaStats.innerHTML = '';
+            Object.keys(stats).slice(1, 6).forEach(key => {
+                listaStats.innerHTML += `<li><strong>${key}:</strong> ${stats[key].toFixed(2)}</li>`;
+            });
+            statsBox.classList.remove('d-none');
+        }
+
+        const playersBox = document.getElementById(`players${tipo}`);
+        playersBox.innerHTML = '';
+        
+        let giocatoriSquadra = datiGiocatori.filter(g => g['Nome Team'] === nomeSquadra);
+        giocatoriSquadra.sort((a, b) => ottieniPrioritaRuolo(a.Ruolo) - ottieniPrioritaRuolo(b.Ruolo));
+
+        giocatoriSquadra.forEach(g => {
+            if(g.Rating === 'N/D') return;
+
+            playersBox.innerHTML += `
+                <div class="form-check">
+                    <input class="form-check-input chk-${tipo}" type="checkbox" value="${parseFloat(g.Rating)}" onchange="calcolaMedia('${tipo}')">
+                    <label class="form-check-label small">
+                        <span class="badge ${ottieniColoreRuolo(g.Ruolo)} me-1">${g.Ruolo}</span> 
+                        ${g['Nome Giocatore']} - <strong>Rating: ${g.Rating}</strong>
+                    </label>
+                </div>
+            `;
+        });
+        calcolaMedia(tipo);
+    }
+
+    function calcolaMedia(tipo) {
+        const checkboxes = document.querySelectorAll(`.chk-${tipo}:checked`);
+        let somma = 0;
+        
+        if(checkboxes.length > 16) {
+            alert("Puoi selezionare massimo 16 giocatori (11 titolari + 5 riserve).");
+            if(window.event) window.event.target.checked = false;
+            return;
+        }
+
+        checkboxes.forEach(chk => { somma += parseFloat(chk.value); });
+        
+        let media = checkboxes.length > 0 ? (somma / checkboxes.length) : 0;
+        document.getElementById(`media${tipo}`).innerText = `Team Rating: ${media.toFixed(2)}`;
+        
+        return media.toFixed(2);
+    }
+
+    async function calcolaPrevisione() {
+        const squadraCasa = document.getElementById('selectCasa').value;
+        const squadraTrasferta = document.getElementById('selectTrasferta').value;
+
+        if(!squadraCasa || !squadraTrasferta) {
+            alert("Per favore seleziona entrambe le squadre!");
+            return;
+        }
+
+        const mediaCasa = parseFloat(calcolaMedia('Casa'));
+        const mediaTrasferta = parseFloat(calcolaMedia('Trasferta'));
+
+        const possessoCasaSlider = parseFloat(document.getElementById('sliderPossession').value);
+        const passaggiCasaSlider = parseFloat(document.getElementById('sliderPassesCasa').value);
+        const passaggiTrasfertaSlider = parseFloat(document.getElementById('sliderPassesTrasferta').value);
+        
+        let statsCasa = datiSquadre[squadraCasa] || {};
+        let statsTrasferta = datiSquadre[squadraTrasferta] || {};
+
+        let arrayDati = [
+            possessoCasaSlider,
+            statsCasa['Expected goals (xG)_Casa'] || 0,
+            statsTrasferta['Expected goals (xG)_Fuori'] || 0,
+            passaggiCasaSlider,
+            passaggiTrasfertaSlider,
+            statsCasa['Shots inside box_Casa'] || 0,
+            statsTrasferta['Shots inside box_Fuori'] || 0,
+            statsCasa['Shots outside box_Casa'] || 0,
+            statsTrasferta['Shots outside box_Fuori'] || 0,
+            statsCasa['xG open play_Casa'] || 0,
+            statsTrasferta['xG open play_Fuori'] || 0,
+            statsCasa['xG set play_Casa'] || 0,
+            statsTrasferta['xG set play_Fuori'] || 0,
+            statsCasa['xG on target (xGOT)_Casa'] || 0,
+            statsTrasferta['xG on target (xGOT)_Fuori'] || 0,
+            mediaCasa,
+            mediaTrasferta
+        ];
+
+        const dataString = JSON.stringify(arrayDati).replace(/\s/g, '');
+
+        try {
+            const response = await fetch(`/api?data=${dataString}`);
+            const result = await response.json();
+            
+            const divRisultato = document.getElementById('risultato');
+            divRisultato.classList.remove('d-none');
+
+            if(result.error) {
+                divRisultato.innerHTML = `❌ Errore API: ${result.error}`;
+                divRisultato.className = "mt-4 alert alert-danger fs-5";
+            } else {
+                divRisultato.innerHTML = `
+                    <strong>Result: ${result.previsione}</strong><br>
+                    <span class="fs-6 text-muted">Probability 1: <strong class="fw-bold">${result.probabilita_1}%</strong> ------ Probability X: <strong class="fw-bold">${result.probabilita_X}%</strong> ------ Probability 2: <strong class="fw-bold">${result.probabilita_2}%</strong></span>
+                `;
+                divRisultato.className = "mt-4 alert alert-success fs-4";
+            }
+
+        } catch(error) {
+            alert("Errore di connessione all'API.");
+            console.error(error);
+        }
+    }
+</script>
+</body>
+</html>

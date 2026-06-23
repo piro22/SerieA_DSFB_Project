@@ -8,3 +8,4 @@ seaborn
 ipykernel
 h2o
 scikit-learn
+flask
