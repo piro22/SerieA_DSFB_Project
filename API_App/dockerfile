@@ -1,0 +1,19 @@
+FROM python:3.13-slim
+
+WORKDIR /app
+COPY requirements.txt .
+
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+COPY app.py .
+COPY logReg_model.pkl .
+
+COPY templates/ ./templates/
+COPY static/ ./static/
+
+# Espone la porta 8080
+EXPOSE 8080
+
+# Comando per avviare l'applicazione Flask
+CMD ["python", "app.py"]

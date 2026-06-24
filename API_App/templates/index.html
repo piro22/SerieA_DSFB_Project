@@ -8,14 +8,12 @@
     <style>
         body { background-color: #f8f9fa; padding-top: 20px; }
         .stats-box { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .players-list { max-height: 300px; overflow-y: auto; background: white; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; }
+        .players-list { max-height: 300px; overflow-y: auto; background: white; padding: 10px; border: 1px solid #dee2e6; border-radius: 8px; }
         .media-voti { font-size: 1.5rem; font-weight: bold; color: #0d6efd; margin-top: 10px; }
         .slider-box { background: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6; margin-top: 15px; }
         .possession-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        /* Ritocco per la media voti dell'Away Team che inizialmente era blu */
         #mediaTrasferta { color: #dc3545; }
 
-        /* Stili per l'overlay di Help personalizzato */
         .help-overlay { 
             position: fixed; 
             top: 0; 
@@ -95,15 +93,40 @@
 
     <div class="row">
         <div class="col-md-6 mb-4">
-            <div class="p-4 rounded-3 bg-primary-subtle border border-primary-subtle">
+            <div class="p-4 rounded-4 bg-primary-subtle border border-primary-subtle">
                 <h3 class="text-primary fw-bold">Home Team</h3>
                 <select id="selectCasa" class="form-select mb-3" onchange="aggiornaSquadra('Casa')">
                     <option value="">-- Select a Team --</option>
                 </select>
                 
                 <div id="statsCasa" class="stats-box d-none">
-                    <h5>Home Team Stats</h5>
-                    <ul id="listaStatsCasa" class="list-unstyled small"></ul>
+                    <h5 class="mb-3">Average Home Team Stats</h5>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">Expected Goals (xG)</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="input_xG_Casa">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">xG Open Play</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="input_xGOpen_Casa">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">xG Set Play</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="input_xGSet_Casa">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">xGOT</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="input_xGOT_Casa">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">Shots Inside Box</label>
+                            <input type="number" step="1" min="0" class="form-control form-control-sm" id="input_shotsInside_Casa">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">Shots Outside Box</label>
+                            <input type="number" step="1" min="0" class="form-control form-control-sm" id="input_shotsOutside_Casa">
+                        </div>
+                    </div>
                 </div>
 
                 <h5>Select Home Players (Max 16)</h5>
@@ -124,15 +147,40 @@
         </div>
 
         <div class="col-md-6 mb-4">
-            <div class="p-4 rounded-3 bg-danger-subtle border border-danger-subtle">
+            <div class="p-4 rounded-4 bg-danger-subtle border border-danger-subtle">
                 <h3 class="text-danger fw-bold">Away Team</h3>
                 <select id="selectTrasferta" class="form-select mb-3" onchange="aggiornaSquadra('Trasferta')">
                     <option value="">-- Select a Team --</option>
                 </select>
 
                 <div id="statsTrasferta" class="stats-box d-none">
-                    <h5>Away Team Stats</h5>
-                    <ul id="listaStatsTrasferta" class="list-unstyled small"></ul>
+                    <h5 class="mb-3">Average Away Team Stats<h5>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">Expected Goals (xG)</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="input_xG_Trasferta">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">xG Open Play</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="input_xGOpen_Trasferta">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">xG Set Play</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="input_xGSet_Trasferta">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">xGOT</label>
+                            <input type="number" step="0.01" min="0" class="form-control form-control-sm" id="input_xGOT_Trasferta">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">Shots Inside Box</label>
+                            <input type="number" step="1" min="0" class="form-control form-control-sm" id="input_shotsInside_Trasferta">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold mb-1">Shots Outside Box</label>
+                            <input type="number" step="1" min="0" class="form-control form-control-sm" id="input_shotsOutside_Trasferta">
+                        </div>
+                    </div>
                 </div>
 
                 <h5>Select Away Players (Max 16)</h5>
@@ -167,8 +215,8 @@
                 </div>
                 
                 <div class="d-flex justify-content-between px-5 mt-1 text-muted small">
-                    <span id="lblNomeCasa">Home</span>
-                    <span id="lblNomeTrasferta">Away</span>
+                    <span class="fs-3 text-primary px-5 me-3" id="lblNomeCasa">Home</span>
+                    <span class="fs-3 text-danger px-5 me-3" id="lblNomeTrasferta">Away</span>
                 </div>
             </div>
         </div>
@@ -198,7 +246,7 @@
 
             popolaTendine();
         } catch(e) {
-            console.log("Inserisci i file JSON statici nel rispettivo percorso del server per popolare le liste.");
+            console.log("Error 500 - Internal Server Error (JSON related)");
         }
     };
 
@@ -246,18 +294,24 @@
 
         document.getElementById(`lblNome${tipo}`).innerText = nomeSquadra;
 
-        const stats = datiSquadre[nomeSquadra];
+        const stats = datiSquadre[nomeSquadra] || {};
         const statsBox = document.getElementById(`stats${tipo}`);
-        const listaStats = document.getElementById(`listaStats${tipo}`);
         
-        if(stats) {
-            listaStats.innerHTML = '';
-            Object.keys(stats).slice(1, 6).forEach(key => {
-                listaStats.innerHTML += `<li><strong>${key}:</strong> ${stats[key].toFixed(2)}</li>`;
-            });
-            statsBox.classList.remove('d-none');
-        }
+        // Identifica il suffisso corretto usato nel JSON delle squadre (_Casa o _Fuori)
+        const suff = (tipo === 'Casa') ? '_Casa' : '_Fuori';
 
+        // Popola i campi di input con i dati estratti dal JSON
+        document.getElementById(`input_xG_${tipo}`).value = (stats[`Expected goals (xG)${suff}`] || 0).toFixed(2);
+        document.getElementById(`input_xGOpen_${tipo}`).value = (stats[`xG open play${suff}`] || 0).toFixed(2);
+        document.getElementById(`input_xGSet_${tipo}`).value = (stats[`xG set play${suff}`] || 0).toFixed(2);
+        document.getElementById(`input_xGOT_${tipo}`).value = (stats[`xG on target (xGOT)${suff}`] || 0).toFixed(2);
+        document.getElementById(`input_shotsInside_${tipo}`).value = Math.round(stats[`Shots inside box${suff}`] || 0);
+        document.getElementById(`input_shotsOutside_${tipo}`).value = Math.round(stats[`Shots outside box${suff}`] || 0);
+
+        // Mostra il pannello delle statistiche
+        statsBox.classList.remove('d-none');
+
+        // Aggiorna la lista dei giocatori
         const playersBox = document.getElementById(`players${tipo}`);
         playersBox.innerHTML = '';
         
@@ -285,7 +339,7 @@
         let somma = 0;
         
         if(checkboxes.length > 16) {
-            alert("Puoi selezionare massimo 16 giocatori (11 titolari + 5 riserve).");
+            alert("You can select a maximum of 16 players (11 startes + 5 substitutions).");
             if(window.event) window.event.target.checked = false;
             return;
         }
@@ -303,7 +357,7 @@
         const squadraTrasferta = document.getElementById('selectTrasferta').value;
 
         if(!squadraCasa || !squadraTrasferta) {
-            alert("Per favore seleziona entrambe le squadre!");
+            alert("Please select both teams!");
             return;
         }
 
@@ -314,25 +368,23 @@
         const passaggiCasaSlider = parseFloat(document.getElementById('sliderPassesCasa').value);
         const passaggiTrasfertaSlider = parseFloat(document.getElementById('sliderPassesTrasferta').value);
         
-        let statsCasa = datiSquadre[squadraCasa] || {};
-        let statsTrasferta = datiSquadre[squadraTrasferta] || {};
-
+        // Estrae i dati dagli input
         let arrayDati = [
             possessoCasaSlider,
-            statsCasa['Expected goals (xG)_Casa'] || 0,
-            statsTrasferta['Expected goals (xG)_Fuori'] || 0,
+            parseFloat(document.getElementById('input_xG_Casa').value) || 0,
+            parseFloat(document.getElementById('input_xG_Trasferta').value) || 0,
             passaggiCasaSlider,
             passaggiTrasfertaSlider,
-            statsCasa['Shots inside box_Casa'] || 0,
-            statsTrasferta['Shots inside box_Fuori'] || 0,
-            statsCasa['Shots outside box_Casa'] || 0,
-            statsTrasferta['Shots outside box_Fuori'] || 0,
-            statsCasa['xG open play_Casa'] || 0,
-            statsTrasferta['xG open play_Fuori'] || 0,
-            statsCasa['xG set play_Casa'] || 0,
-            statsTrasferta['xG set play_Fuori'] || 0,
-            statsCasa['xG on target (xGOT)_Casa'] || 0,
-            statsTrasferta['xG on target (xGOT)_Fuori'] || 0,
+            parseFloat(document.getElementById('input_shotsInside_Casa').value) || 0,
+            parseFloat(document.getElementById('input_shotsInside_Trasferta').value) || 0,
+            parseFloat(document.getElementById('input_shotsOutside_Casa').value) || 0,
+            parseFloat(document.getElementById('input_shotsOutside_Trasferta').value) || 0,
+            parseFloat(document.getElementById('input_xGOpen_Casa').value) || 0,
+            parseFloat(document.getElementById('input_xGOpen_Trasferta').value) || 0,
+            parseFloat(document.getElementById('input_xGSet_Casa').value) || 0,
+            parseFloat(document.getElementById('input_xGSet_Trasferta').value) || 0,
+            parseFloat(document.getElementById('input_xGOT_Casa').value) || 0,
+            parseFloat(document.getElementById('input_xGOT_Trasferta').value) || 0,
             mediaCasa,
             mediaTrasferta
         ];
@@ -347,18 +399,18 @@
             divRisultato.classList.remove('d-none');
 
             if(result.error) {
-                divRisultato.innerHTML = `❌ Errore API: ${result.error}`;
+                divRisultato.innerHTML = `Errore API: ${result.error}`;
                 divRisultato.className = "mt-4 alert alert-danger fs-5";
             } else {
                 divRisultato.innerHTML = `
                     <strong>Result: ${result.previsione}</strong><br>
-                    <span class="fs-6 text-muted">Probability 1: <strong class="fw-bold">${result.probabilita_1}%</strong> ------ Probability X: <strong class="fw-bold">${result.probabilita_X}%</strong> ------ Probability 2: <strong class="fw-bold">${result.probabilita_2}%</strong></span>
+                    <span class="fs-6 text-muted">Probability 1: <strong class="fw-bold">${result.probabilita_1}%</strong> --- --- --- Probability X: <strong class="fw-bold">${result.probabilita_X}%</strong> --- --- --- Probability 2: <strong class="fw-bold">${result.probabilita_2}%</strong></span>
                 `;
                 divRisultato.className = "mt-4 alert alert-success fs-4";
             }
 
         } catch(error) {
-            alert("Errore di connessione all'API.");
+            alert("API Connection Error");
             console.error(error);
         }
     }

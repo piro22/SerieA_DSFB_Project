@@ -10,7 +10,7 @@ app = Flask(__name__)
 # 1. CARICAMENTO DATI DAL FILE .PKL
 # ==========================================
 # Carichiamo il dizionario che abbiamo salvato nello script precedente
-with open(f'.\logReg_model.pkl', 'rb') as file:
+with open(f'./logReg_model.pkl', 'rb') as file:
     dati_modello = pickle.load(file)
 
 modello = dati_modello['modello']
@@ -37,9 +37,9 @@ def api():
         prob_2 = probabilita[1]
         prob_3 = probabilita[2]
         
-        if prob_1 > threshold:
+        if ((prob_1 > threshold)  and (prob_1 > prob_2)):
             esito = '1'
-        elif prob_2 > threshold:
+        elif ((prob_2 > threshold) and (prob_2 > prob_1)):
             esito = '2'
         else:
             esito = 'X'
