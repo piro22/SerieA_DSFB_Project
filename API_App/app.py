@@ -1,15 +1,12 @@
 from flask import Flask, request, jsonify, make_response, send_from_directory, render_template
-import pickle # Usiamo joblib al posto di pickle
+import pickle
 import pandas as pd
 import os
 import json
 
 app = Flask(__name__)
 
-# ==========================================
-# 1. CARICAMENTO DATI DAL FILE .PKL
-# ==========================================
-# Carichiamo il dizionario che abbiamo salvato nello script precedente
+# carico dati da pkl
 with open(f'./logReg_model.pkl', 'rb') as file:
     dati_modello = pickle.load(file)
 
