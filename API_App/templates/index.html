@@ -139,7 +139,7 @@
                     <h5 class="text-primary mb-3">Match Parameters (Home)</h5>
                     <div class="mb-3">
                         <label for="sliderPassesCasa" class="form-label">Passes Accuracy: <strong id="valPassesCasa">75</strong>%</label>
-                        <input type="range" class="form-range" id="sliderPassesCasa" min="0" max="100" value="75" 
+                        <input type="range" class="form-range" id="sliderPassesCasa" min="50" max="100" value="75" 
                                oninput="document.getElementById('valPassesCasa').innerText = this.value">
                     </div>
                 </div>
@@ -154,7 +154,7 @@
                 </select>
 
                 <div id="statsTrasferta" class="stats-box d-none">
-                    <h5 class="mb-3">Average Away Team Stats<h5>
+                    <h5 class="mb-3">Average Away Team Stats</h5>
                     <div class="row g-2">
                         <div class="col-6">
                             <label class="form-label small fw-bold mb-1">Expected Goals (xG)</label>
@@ -193,7 +193,7 @@
                     <h5 class="text-danger mb-3">Match Parameters (Trasferta)</h5>
                     <div class="mb-3">
                         <label for="sliderPassesTrasferta" class="form-label">Passes Accuracy: <strong id="valPassesTrasferta">75</strong>%</label>
-                        <input type="range" class="form-range" id="sliderPassesTrasferta" min="0" max="100" value="75" 
+                        <input type="range" class="form-range" id="sliderPassesTrasferta" min="50" max="100" value="75" 
                                oninput="document.getElementById('valPassesTrasferta').innerText = this.value">
                     </div>
                 </div>
@@ -339,9 +339,9 @@
         let somma = 0;
         
         if(checkboxes.length > 16) {
-            alert("You can select a maximum of 16 players (11 startes + 5 substitutions).");
+            alert("You can select a maximum of 16 players (11 starters + 5 substitutions).");
             if(window.event) window.event.target.checked = false;
-            return;
+            return calcolaMedia(tipo);
         }
 
         checkboxes.forEach(chk => { somma += parseFloat(chk.value); });
@@ -352,68 +352,79 @@
         return media.toFixed(2);
     }
 
+
     async function calcolaPrevisione() {
-        const squadraCasa = document.getElementById('selectCasa').value;
-        const squadraTrasferta = document.getElementById('selectTrasferta').value;
+    const squadraCasa = document.getElementById('selectCasa').value;
+    const squadraTrasferta = document.getElementById('selectTrasferta').value;
 
-        if(!squadraCasa || !squadraTrasferta) {
-            alert("Please select both teams!");
-            return;
-        }
-
-        const mediaCasa = parseFloat(calcolaMedia('Casa'));
-        const mediaTrasferta = parseFloat(calcolaMedia('Trasferta'));
-
-        const possessoCasaSlider = parseFloat(document.getElementById('sliderPossession').value);
-        const passaggiCasaSlider = parseFloat(document.getElementById('sliderPassesCasa').value);
-        const passaggiTrasfertaSlider = parseFloat(document.getElementById('sliderPassesTrasferta').value);
-        
-        // Estrae i dati dagli input
-        let arrayDati = [
-            possessoCasaSlider,
-            parseFloat(document.getElementById('input_xG_Casa').value) || 0,
-            parseFloat(document.getElementById('input_xG_Trasferta').value) || 0,
-            passaggiCasaSlider,
-            passaggiTrasfertaSlider,
-            parseFloat(document.getElementById('input_shotsInside_Casa').value) || 0,
-            parseFloat(document.getElementById('input_shotsInside_Trasferta').value) || 0,
-            parseFloat(document.getElementById('input_shotsOutside_Casa').value) || 0,
-            parseFloat(document.getElementById('input_shotsOutside_Trasferta').value) || 0,
-            parseFloat(document.getElementById('input_xGOpen_Casa').value) || 0,
-            parseFloat(document.getElementById('input_xGOpen_Trasferta').value) || 0,
-            parseFloat(document.getElementById('input_xGSet_Casa').value) || 0,
-            parseFloat(document.getElementById('input_xGSet_Trasferta').value) || 0,
-            parseFloat(document.getElementById('input_xGOT_Casa').value) || 0,
-            parseFloat(document.getElementById('input_xGOT_Trasferta').value) || 0,
-            mediaCasa,
-            mediaTrasferta
-        ];
-
-        const dataString = JSON.stringify(arrayDati).replace(/\s/g, '');
-
-        try {
-            const response = await fetch(`/api?data=${dataString}`);
-            const result = await response.json();
-            
-            const divRisultato = document.getElementById('risultato');
-            divRisultato.classList.remove('d-none');
-
-            if(result.error) {
-                divRisultato.innerHTML = `Errore API: ${result.error}`;
-                divRisultato.className = "mt-4 alert alert-danger fs-5";
-            } else {
-                divRisultato.innerHTML = `
-                    <strong>Result: ${result.previsione}</strong><br>
-                    <span class="fs-6 text-muted">Probability 1: <strong class="fw-bold">${result.probabilita_1}%</strong> --- --- --- Probability X: <strong class="fw-bold">${result.probabilita_X}%</strong> --- --- --- Probability 2: <strong class="fw-bold">${result.probabilita_2}%</strong></span>
-                `;
-                divRisultato.className = "mt-4 alert alert-success fs-4";
-            }
-
-        } catch(error) {
-            alert("API Connection Error");
-            console.error(error);
-        }
+    if(!squadraCasa || !squadraTrasferta) {
+        alert("Please select both teams!");
+        return;
     }
+
+    
+    const countCasa = document.querySelectorAll('.chk-Casa:checked').length;
+    const countTrasferta = document.querySelectorAll('.chk-Trasferta:checked').length;
+
+    if (countCasa < 11 || countTrasferta < 11) {
+        alert(`Error: You must select at least 11 players for each team!\nCurrently selected -> Home: ${countCasa}, Away: ${countTrasferta}`);
+        return;
+    }
+    
+
+    const mediaCasa = parseFloat(calcolaMedia('Casa'));
+    const mediaTrasferta = parseFloat(calcolaMedia('Trasferta'));
+
+    const possessoCasaSlider = parseFloat(document.getElementById('sliderPossession').value);
+    const passaggiCasaSlider = parseFloat(document.getElementById('sliderPassesCasa').value);
+    const passaggiTrasfertaSlider = parseFloat(document.getElementById('sliderPassesTrasferta').value);
+    
+    // Estrae i dati dagli input
+    let arrayDati = [
+        possessoCasaSlider,
+        parseFloat(document.getElementById('input_xG_Casa').value) || 0,
+        parseFloat(document.getElementById('input_xG_Trasferta').value) || 0,
+        passaggiCasaSlider,
+        passaggiTrasfertaSlider,
+        parseFloat(document.getElementById('input_shotsInside_Casa').value) || 0,
+        parseFloat(document.getElementById('input_shotsInside_Trasferta').value) || 0,
+        parseFloat(document.getElementById('input_shotsOutside_Casa').value) || 0,
+        parseFloat(document.getElementById('input_shotsOutside_Trasferta').value) || 0,
+        parseFloat(document.getElementById('input_xGOpen_Casa').value) || 0,
+        parseFloat(document.getElementById('input_xGOpen_Trasferta').value) || 0,
+        parseFloat(document.getElementById('input_xGSet_Casa').value) || 0,
+        parseFloat(document.getElementById('input_xGSet_Trasferta').value) || 0,
+        parseFloat(document.getElementById('input_xGOT_Casa').value) || 0,
+        parseFloat(document.getElementById('input_xGOT_Trasferta').value) || 0,
+        mediaCasa,
+        mediaTrasferta
+    ];
+
+    const dataString = JSON.stringify(arrayDati).replace(/\s/g, '');
+
+    try {
+        const response = await fetch(`/api?data=${dataString}`);
+        const result = await response.json();
+        
+        const divRisultato = document.getElementById('risultato');
+        divRisultato.classList.remove('d-none');
+
+        if(result.error) {
+            divRisultato.innerHTML = `Errore API: ${result.error}`;
+            divRisultato.className = "mt-4 alert alert-danger fs-5";
+        } else {
+            divRisultato.innerHTML = `
+                <strong>Result: ${result.previsione}</strong><br>
+                <span class="fs-6 text-muted">Probability 1: <strong class="fw-bold">${result.probabilita_1}%</strong> --- --- --- Probability X: <strong class="fw-bold">${result.probabilita_X}%</strong> --- --- --- Probability 2: <strong class="fw-bold">${result.probabilita_2}%</strong></span>
+            `;
+            divRisultato.className = "mt-4 alert alert-success fs-4";
+        }
+
+    } catch(error) {
+        alert("API Connection Error");
+        console.error(error);
+    }
+}
 </script>
 </body>
 </html>
