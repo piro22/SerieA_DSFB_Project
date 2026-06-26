@@ -8,23 +8,23 @@ In addition to a web app, you can also use the standard API via the curl command
 - Example of a cURL command from the Windows PowerShell: <br><code>Invoke-WebRequest -Method Get -Uri 'http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]'</code>
 - Example of a cURL command from a Linux terminal: <br><code>curl -X GET "http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]"</code><br>
 - Order of the 17 parameters in the array:
-    1. Home Team Ball Possession (%)
-    2. xG Home</li>
-    3. xG Away</li>
-    4. Passes Accuracy Home (%)
-    5. Passes Accuracy Away (%)
-    6. Shots inside the box Home
-    7. Shots inside the box Away
-    8. Shots outside the box Home
-    9. Shots outside the box Away
-    10. xG Open Play Home
-    11. xG Open Play Away
-    12. xG Set Play Home
-    13. xG Set Play Away
-    14. xGOT Home
-    15. xGOT Away
-    16. Team Rating Home (0-10)
-    17. Team Rating Away (0-10)
+    - Home Team Ball Possession (%)
+    - xG Home</li>
+    - xG Away</li>
+    - Passes Accuracy Home (%)
+    - Passes Accuracy Away (%)
+    - Shots inside the box Home
+    - Shots inside the box Away
+    - Shots outside the box Home
+    - Shots outside the box Away
+    - xG Open Play Home
+    - xG Open Play Away
+    - xG Set Play Home
+    - xG Set Play Away
+    - xGOT Home
+    - xGOT Away
+    - Team Rating Home (0-10)
+    - Team Rating Away (0-10)
 
 
 ## Dataset Description
