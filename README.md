@@ -8,25 +8,24 @@ In addition to a web app, you can also use the standard API via the curl command
 - Example of a cURL command from the Windows PowerShell: <br><code>Invoke-WebRequest -Method Get -Uri 'http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]'</code>
 - Example of a cURL command from a Linux terminal: <br><code>curl -X GET "http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]"</code><br>
 - Order of the 17 parameters in the array:
-    <ol>
-        <li>Home Team Ball Possession (%)</li>
-        <li>xG Home</li>
-        <li>xG Away</li>
-        <li>Passes Accuracy Home (%)</li>
-        <li>Passes Accuracy Away (%)</li>
-        <li>Shots inside the box Home</li>
-        <li>Shots inside the box Away</li>
-        <li>Shots outside the box Home</li>
-        <li>Shots outside the box Away</li>
-        <li>xG Open Play Home</li>
-        <li>xG Open Play Away</li>
-        <li>xG Set Play Home</li>
-        <li>xG Set Play Away</li>
-        <li>xGOT Home</li>
-        <li>xGOT Away</li>
-        <li>Team Rating Home (0-10)</li>
-        <li>Team Rating Away (0-10)</li>
-    </ol>
+    1. Home Team Ball Possession (%)
+    2. xG Home</li>
+    3. xG Away</li>
+    4. Passes Accuracy Home (%)
+    5. Passes Accuracy Away (%)
+    6. Shots inside the box Home
+    7. Shots inside the box Away
+    8. Shots outside the box Home
+    9. Shots outside the box Away
+    10. xG Open Play Home
+    11. xG Open Play Away
+    12. xG Set Play Home
+    13. xG Set Play Away
+    14. xGOT Home
+    15. xGOT Away
+    16. Team Rating Home (0-10)
+    17. Team Rating Away (0-10)
+
 
 ## Dataset Description
 The project relies on data scraped directly from FotMob, processed and explored in the `data_exploration.ipynb` notebook and fed to an ML model in the `summary.ipynb` notebook. The data is divided into:
