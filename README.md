@@ -3,28 +3,7 @@
 ## Project Description
 This project consists in an API or web tool that you can run on your local machine built to predict the final outcomes of Italian Serie A football matches, classifying them into Home Win (1), Draw (X), or Away Win (2). I choose this project because I wanted to see if we can predict match results using numbers and statistics instead of just feeling or personal bias. To do this, I collected data from the last three Serie A seasons, covering everything from ball possession and accurate passes to more specific stats like Expected Goals (xG) and shots inside the box.
 
-The core idea is very simple: the user selects the starting eleven and the optional bench players for the two teams previously chosen. Then, the system calculates the overall team rating and combines it with historical team data to predict how the match will end. All the statistics automatically inserted can be modified with the exception of the team rating. This project is essentially a web app for football fans who want a data-based prediction without getting lost in overly complicated dashboards. You just pick the teams, look at the stats, and get a prediction based on real-world performances. <br><br>
-In addition to a web app, you can also use the standard API via the curl command:
-- Example of a cURL command from the Windows PowerShell: <br><code>Invoke-WebRequest -Method Get -Uri 'http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]'</code>
-- Example of a cURL command from a Linux terminal: <br><code>curl -X GET "http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]"</code><br>
-- Order of the 17 parameters in the array:
-    - Home Team Ball Possession (%)
-    - xG Home</li>
-    - xG Away</li>
-    - Passes Accuracy Home (%)
-    - Passes Accuracy Away (%)
-    - Shots inside the box Home
-    - Shots inside the box Away
-    - Shots outside the box Home
-    - Shots outside the box Away
-    - xG Open Play Home
-    - xG Open Play Away
-    - xG Set Play Home
-    - xG Set Play Away
-    - xGOT Home
-    - xGOT Away
-    - Team Rating Home (0-10)
-    - Team Rating Away (0-10)
+The core idea is very simple: the user selects the starting eleven and the optional bench players for the two teams previously chosen. Then, the system calculates the overall team rating and combines it with historical team data to predict how the match will end. All the statistics automatically inserted can be modified with the exception of the team rating. This project is essentially a web app for football fans who want a data-based prediction without getting lost in overly complicated dashboards. You just pick the teams, look at the stats, and get a prediction based on real-world performances.
 
 
 ## Dataset Description
@@ -49,3 +28,24 @@ To set up the project and run the web app on your local machine, follow these si
 3. Run the container:
     <code>docker run -d -p 8080:8080 ghcr.io/piro22/my_seriea_webapp:latest</code>
 4. Go to http://localhost:8080/ in order to access the webapp
+5. In addition to a web app, you can also use the standard API via the curl command:
+    - Example of a cURL command from the Windows PowerShell: <br><code>Invoke-WebRequest -Method Get -Uri 'http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]'</code>
+    - Example of a cURL command from a Linux terminal: <br><code>curl -X GET "http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]"</code><br>
+    - Order of the 17 parameters in the array:
+        - Home Team Ball Possession (%)
+        - xG Home</li>
+        - xG Away</li>
+        - Passes Accuracy Home (%)
+        - Passes Accuracy Away (%)
+        - Shots inside the box Home
+        - Shots inside the box Away
+        - Shots outside the box Home
+        - Shots outside the box Away
+        - xG Open Play Home
+        - xG Open Play Away
+        - xG Set Play Home
+        - xG Set Play Away
+        - xGOT Home
+        - xGOT Away
+        - Team Rating Home (0-10)
+        - Team Rating Away (0-10)
