@@ -23,12 +23,15 @@ This unpredictability also explains another interesting finding from the tests: 
 To set up the project and run the web app on your local machine, follow these simple steps:
 
 1. install docker if not already installed
-2. Pull the package from github: 
+2. Login to ghcr.io into your terminal with token:
+    - Windows: <code>$env:CR_PAT="GITHUB_TOKEN"</code> and subsequently <code>$env:CR_PAT | docker login ghcr.io -u {USERNAME} --password-stdin</code>
+    - Linux: <code>export CR_PAT=GITHUB_TOKEN</code> and subsequently <code>echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin</code>
+3. Pull the package from github: 
     <code>docker pull ghcr.io/piro22/my_seriea_webapp:latest</code>
-3. Run the container:
+4. Run the container:
     <code>docker run -d -p 8080:8080 ghcr.io/piro22/my_seriea_webapp:latest</code>
-4. Go to http://localhost:8080/ in order to access the webapp
-5. In addition to a web app, you can also use the standard API via the curl command:
+5. Go to http://localhost:8080/ in order to access the webapp
+6. In addition to a web app, you can also use the standard API via the curl command:
     - Example of a cURL command from the Windows PowerShell: <br><code>Invoke-WebRequest -Method Get -Uri 'http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]'</code>
     - Example of a cURL command from a Linux terminal: <br><code>curl -X GET "http://127.0.0.1:8080/api?data=[45,1.3,2.5,67,77,2,5,6,1,0.8,1.4,1.2,1.0,0.4,0.8,7.45,6.23]"</code><br>
     - Order of the 17 parameters in the array:
